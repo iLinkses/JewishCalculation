@@ -1,0 +1,70 @@
+﻿<Window x:Class="JewishCalculationWPF.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JewishCalculationWPF.Windows"
+        mc:Ignorable="d"
+        
+        Title="Еврейский расчет"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Height="450" Width="800">
+
+    <Grid ShowGridLines="True">
+        <DockPanel LastChildFill="True">
+            <Grid DockPanel.Dock="Top">
+                <Menu>
+                    <MenuItem Header="Меню">
+                        <MenuItem Header="Добавить потребителя" Click="AddPerson_Click"/>
+                        <MenuItem Header="Добавить товар" Click="AddProduct_Click"/>
+                        <MenuItem Header="Добавить потребление" Click="AddConsumption_Click"/>
+                    </MenuItem>
+                </Menu>
+            </Grid>
+            <Grid DockPanel.Dock="Bottom">
+                <StatusBar>
+                    <StatusBarItem Content="Что-то"/>
+                </StatusBar>
+            </Grid>
+            <Grid>
+                <TabControl>
+                    <TabItem Header="Общая информация">
+                        <DataGrid AutoGenerateColumns="False" IsEnabled="False" ColumnWidth="*">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{x:Null}" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="ФИО" IsReadOnly="True"/>
+                                <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Сумма" IsReadOnly="True"/>
+                            </DataGrid.Columns>
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="Дополнительная информация для строки"/>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Детальная информация">
+                        <Grid ShowGridLines="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.1*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <TextBlock Text="Персона" Margin="9 9 3 3"/>
+                                <ComboBox Width="111" Margin="3 9 3 3"/>
+                                <TextBlock Text="Общая сумма:" Margin="3 9 9 3"/>
+                            </StackPanel>
+                            <DataGrid Grid.Row="1" AutoGenerateColumns="False" Margin="9 3 9 9" ColumnWidth="*">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Товар" IsReadOnly="True"/>
+                                    <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Количество" IsReadOnly="True"/>
+                                    <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Сумма" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
