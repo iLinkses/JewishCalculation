@@ -38,6 +38,12 @@ namespace JewishCalculationWPF.Windows
             //addProduct.Topmost = true;
             addProduct.ShowDialog();
         }
+        private void btAddProduct_Click(object sender, RoutedEventArgs e)
+        {
+            Classes.GetProductsFromCheck getProductsFromCheck = new Classes.GetProductsFromCheck();
+            DateTime dateTime = new DateTime(dpdateTime.SelectedDate.Value.Year, dpdateTime.SelectedDate.Value.Month, dpdateTime.SelectedDate.Value.Day, int.Parse(tbH.Text), int.Parse(tbM.Text), 0);
+            getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime);
+        }
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
         {
             AddConsumption addConsumption = new AddConsumption();

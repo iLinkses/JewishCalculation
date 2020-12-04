@@ -10,16 +10,22 @@ namespace JewishCalculationWPF.Classes
     {
         //internal class Person : IPerson
         //{
-        //    int IPerson.ID { get; set; }
-        //    string IPerson.FIO { get; set; }
+        //    int ID { get; set; }
+        //    string IPerson.FIO { get ; set; }
         //}
         //internal class Product : IProduct
         //{
-        //    int IProduct.ID { get; set; }
+        //    int ID { get; set; }
         //    string IProduct.Name { get; set; }
         //    double IProduct.Price { get; set; }
+        //    double IProduct.Quantity { get; set; }
         //}
-        internal class Person
+        //internal class Consumption : IConsumption
+        //{
+        //    IPerson IConsumption.person { get; set; }
+        //    List<IProduct> IConsumption.products { get; set; }
+        //}
+       internal class Person
         {
             //internal int ID { get; set; }
             public string FIO { get; set; }
@@ -39,6 +45,5 @@ namespace JewishCalculationWPF.Classes
         internal static List<Person> persons = new List<Person>();
         internal static List<Product> products = new List<Product>();
         internal static List<Consumption> consumptions = new List<Consumption>();
-
     }
 }

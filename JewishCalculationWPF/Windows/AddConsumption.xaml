@@ -24,7 +24,7 @@
         </StackPanel>
         <DataGrid Name="dgProducts" Grid.Row="1" AutoGenerateColumns="False" Margin="9 3 9 9">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Товар" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=Name}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Товар" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Количество"/>
             </DataGrid.Columns>
 

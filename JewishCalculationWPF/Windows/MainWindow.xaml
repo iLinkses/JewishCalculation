@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JewishCalculationWPF.Windows"
+        
         mc:Ignorable="d"
         
         Title="Еврейский расчет"
@@ -17,7 +18,35 @@
                 <Menu>
                     <MenuItem Header="Меню">
                         <MenuItem Header="Добавить потребителя" Click="AddPerson_Click"/>
-                        <MenuItem Header="Добавить товар" Click="AddProduct_Click"/>
+                        <MenuItem Header="Добавить товар">
+                            <MenuItem Header="Вручную" Click="AddProduct_Click"/>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="ФН чека"/>
+                                    <TextBox Name="tbfiscal_mark" Width="99" Text="924292967220"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="РНМ чека"/>
+                                    <TextBox Name="tbstate_number" Width="99" Text="010100918831"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Сумма чека"/>
+                                    <TextBox Name="tbsum" Width="99" Text="747"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Дата чека"/>
+                                    <DatePicker Name="dpdateTime" SelectedDateFormat="Short"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Время чека"/>
+                                    <TextBox Name="tbH" Width="33" Text="14"/>
+                                    <TextBlock Text="ч."/>
+                                    <TextBox Name="tbM" Width="33" Text="37"/>
+                                    <TextBlock Text="м."/>
+                                </StackPanel>
+                                <Button Name="btAddProduct" Content="Добавить через чек" Click="btAddProduct_Click"/>
+                            </StackPanel>
+                        </MenuItem>
                         <MenuItem Header="Добавить потребление" Click="AddConsumption_Click"/>
                     </MenuItem>
                 </Menu>
