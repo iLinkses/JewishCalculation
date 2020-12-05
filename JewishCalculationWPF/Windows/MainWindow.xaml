@@ -16,38 +16,40 @@
         <DockPanel LastChildFill="True">
             <Grid DockPanel.Dock="Top">
                 <Menu>
-                    <MenuItem Header="Меню">
+                    <MenuItem Header="Меню" Name="Menu" Click="Menu_Click">
                         <MenuItem Header="Добавить потребителя" Click="AddPerson_Click"/>
                         <MenuItem Header="Добавить товар">
                             <MenuItem Header="Вручную" Click="AddProduct_Click"/>
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="ФН чека"/>
-                                    <TextBox Name="tbfiscal_mark" Width="99" Text="924292967220"/>
+                            <MenuItem Header="С чека">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="ФН чека"/>
+                                        <TextBox Name="tbfiscal_mark" Width="99" Text="924292967220"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="РНМ чека"/>
+                                        <TextBox Name="tbstate_number" Width="99" Text="010100918831"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Сумма чека"/>
+                                        <TextBox Name="tbsum" Width="99" Text="747"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Дата чека"/>
+                                        <DatePicker Name="dpdateTime" SelectedDateFormat="Short"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Время чека"/>
+                                        <TextBox Name="tbH" Width="33" Text="14"/>
+                                        <TextBlock Text="ч."/>
+                                        <TextBox Name="tbM" Width="33" Text="37"/>
+                                        <TextBlock Text="м."/>
+                                    </StackPanel>
+                                    <Button Name="btAddProduct" Content="Добавить через чек" Click="btAddProduct_Click"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="РНМ чека"/>
-                                    <TextBox Name="tbstate_number" Width="99" Text="010100918831"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Сумма чека"/>
-                                    <TextBox Name="tbsum" Width="99" Text="747"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Дата чека"/>
-                                    <DatePicker Name="dpdateTime" SelectedDateFormat="Short"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Время чека"/>
-                                    <TextBox Name="tbH" Width="33" Text="14"/>
-                                    <TextBlock Text="ч."/>
-                                    <TextBox Name="tbM" Width="33" Text="37"/>
-                                    <TextBlock Text="м."/>
-                                </StackPanel>
-                                <Button Name="btAddProduct" Content="Добавить через чек" Click="btAddProduct_Click"/>
-                            </StackPanel>
+                            </MenuItem>
                         </MenuItem>
-                        <MenuItem Header="Добавить потребление" Click="AddConsumption_Click"/>
+                        <MenuItem Header="Добавить потребление" Name="AddConsumption" Click="AddConsumption_Click" IsEnabled="False"/>
                     </MenuItem>
                 </Menu>
             </Grid>

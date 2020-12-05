@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 
@@ -35,14 +33,12 @@ namespace JewishCalculationWPF.Classes
         /// <param name="dateTime">дата чека</param>
         internal bool GetCheckFromConsumer(string fiscal_mark, string state_number, double sum, DateTime dateTime)
         {
-            var url = $"https://consumer.oofd.kz?i={fiscal_mark}&f={state_number}&s={sum}&t={dateTime:yyyyMMdd}T{dateTime:HHmmss}";
-            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            var httpRequest = (HttpWebRequest)WebRequest.Create($"https://consumer.oofd.kz?i={fiscal_mark}&f={state_number}&s={sum}&t={dateTime:yyyyMMdd}T{dateTime:HHmmss}");
             httpRequest.AllowAutoRedirect = false;
             var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
 
             if (httpResponse.Headers.Get("Location").Contains("/ticket-not-found"))
             {
-                //GetCheckFromOfd1(dateTime, state_number, fiscal_mark);
                 return false;
             }
 
@@ -65,7 +61,6 @@ namespace JewishCalculationWPF.Classes
                         Price = double.Parse(t.price.ToString()),
                         Quantity = double.Parse(t.quantity.ToString())
                     });
-                    //Console.WriteLine($"Название: {t.name};\nЦена: {t.price};\nКоличество: {t.quantity};\nСумма: {t.sum}\n\n");
                 }
                 return true;
             }
@@ -79,11 +74,7 @@ namespace JewishCalculationWPF.Classes
         /// <param name="fiscal_mark">ФН чека</param>
         internal bool GetCheckFromOfd1(DateTime date, string state_number, string fiscal_mark)
         {
-
-            //20.08.2020
-            var url = "https://ofd1.kz/check_ticket";
-
-            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            var httpRequest = (HttpWebRequest)WebRequest.Create("https://ofd1.kz/check_ticket");
             httpRequest.Method = "POST";
 
             httpRequest.Headers["cookie"] = "_pulsar_key=SFMyNTY.g3QAAAABbQAAAAtfY3NyZl90b2tlbm0AAAAYMXk2ZmlNOU5xcHlUMWNfbUpIdWRIY01W.XUhxZyFBKc12WbHPm-aCwCD3Z_Niv6BOu8DnK4D2_Ak";
@@ -112,15 +103,15 @@ namespace JewishCalculationWPF.Classes
             {
                 foreach (var node in allertNodes)
                 {
-                    if (node.InnerText.Contains("Чек не найден.."))
+                    if (node.InnerText != "")
                     {
                         Console.WriteLine($"{node.InnerHtml}");
                         return false;
                     }
                 }
+                
             }
 
-            //получаем список всех span в которых содержится цена
             var nodes = doc.DocumentNode.SelectNodes("//ol[@class=\"ready_ticket__items_list\"]//li");
             if (nodes == null)
                 throw new ArgumentNullException("Данные не корректны");
@@ -136,12 +127,6 @@ namespace JewishCalculationWPF.Classes
                     }
                     else continue;
                 }
-
-                //string Name = node.SelectSingleNode("text()").InnerText.Trim();
-                //string P = ready_ticket__item.Substring(0, ready_ticket__item.IndexOf('x')).Trim();
-                //string Q = new Regex(@"x(.*?)=").Match(ready_ticket__item).Groups[1].Value.Trim();
-                //double Price = double.Parse(P, CultureInfo.InvariantCulture);
-                //double Quantity = double.Parse(Q, CultureInfo.InvariantCulture);
 
                 Models.products.Add(new Models.Product
                 {

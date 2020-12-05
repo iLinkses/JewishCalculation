@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JewishCalculationWPF.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,14 @@ namespace JewishCalculationWPF.Windows
         {
             InitializeComponent();
         }
+        private void Menu_Click(object sender, RoutedEventArgs e)//Не всегда срабатывает
+        {
+            if (Models.products.Count == 0 || Models.persons.Count == 0)
+            {
+                AddConsumption.IsEnabled = false;
+            }
+            else AddConsumption.IsEnabled = true;
+        }
         private void AddPerson_Click(object sender, RoutedEventArgs e)
         {
             AddPerson addPerson = new AddPerson();
@@ -42,7 +51,11 @@ namespace JewishCalculationWPF.Windows
         {
             Classes.GetProductsFromCheck getProductsFromCheck = new Classes.GetProductsFromCheck();
             DateTime dateTime = new DateTime(dpdateTime.SelectedDate.Value.Year, dpdateTime.SelectedDate.Value.Month, dpdateTime.SelectedDate.Value.Day, int.Parse(tbH.Text), int.Parse(tbM.Text), 0);
-            getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime);
+            if (getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime))
+            {
+                MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
         {
