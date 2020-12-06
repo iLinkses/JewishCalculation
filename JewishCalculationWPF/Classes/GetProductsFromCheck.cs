@@ -59,7 +59,8 @@ namespace JewishCalculationWPF.Classes
                     {
                         Name = t.name.ToString(),
                         Price = double.Parse(t.price.ToString()),
-                        Quantity = double.Parse(t.quantity.ToString())
+                        Quantity = double.Parse(t.quantity.ToString()),
+                        Sum = double.Parse(t.sum.ToString())
                     });
                 }
                 return true;
@@ -109,7 +110,7 @@ namespace JewishCalculationWPF.Classes
                         return false;
                     }
                 }
-                
+
             }
 
             var nodes = doc.DocumentNode.SelectNodes("//ol[@class=\"ready_ticket__items_list\"]//li");
@@ -132,8 +133,8 @@ namespace JewishCalculationWPF.Classes
                 {
                     Name = node.SelectSingleNode("text()").InnerText.Trim(),
                     Price = double.Parse(ready_ticket__item.Substring(0, ready_ticket__item.IndexOf('x')).Trim(), CultureInfo.InvariantCulture),
-                    Quantity = double.Parse(new Regex(@"x(.*?)=").Match(ready_ticket__item).Groups[1].Value.Trim(), CultureInfo.InvariantCulture)
-                    //sum = new Regex(@"=(.*)").Match(ready_ticket__item).Groups[1].Value.Trim()
+                    Quantity = double.Parse(new Regex(@"x(.*?)=").Match(ready_ticket__item).Groups[1].Value.Trim(), CultureInfo.InvariantCulture),
+                    Sum = double.Parse(new Regex(@"=(.*)").Match(ready_ticket__item).Groups[1].Value.Trim(), CultureInfo.InvariantCulture)
                 });
             }
             return true;

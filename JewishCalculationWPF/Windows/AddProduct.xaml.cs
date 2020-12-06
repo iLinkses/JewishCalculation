@@ -19,7 +19,8 @@ namespace JewishCalculationWPF.Windows
             {
                 Name = tbName.Text,
                 Price = double.Parse(tbPrice.Text),
-                Quantity = double.Parse(tbQuantity.Text)
+                Quantity = double.Parse(tbQuantity.Text),
+                Sum = double.Parse(tbPrice.Text) * double.Parse(tbQuantity.Text)
             });
         }
     }

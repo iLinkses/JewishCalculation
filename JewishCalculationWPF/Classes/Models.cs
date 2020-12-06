@@ -36,6 +36,7 @@ namespace JewishCalculationWPF.Classes
             public string Name { get; set; }
             public double Price { get; set; }
             public double Quantity { get; set; }
+            public double Sum { get; set; }
         }
         internal class Consumption
         {
