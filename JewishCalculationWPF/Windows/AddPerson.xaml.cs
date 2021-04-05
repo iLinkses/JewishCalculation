@@ -26,14 +26,14 @@ namespace JewishCalculationWPF.Windows
         }
         private void AddPerson_Click(object sender, RoutedEventArgs e)
         {
-            if (tbSecondName.Text.Length == 0 && tbFirstName.Text.Length==0 && tbLastName.Text.Length == 0)
+            if (tbSecondName.Text.Length.Equals(0) && tbFirstName.Text.Length.Equals(0) && tbLastName.Text.Length.Equals(0))
             {
                 MessageBox.Show("Для добавления введите данные пользователя!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Models.persons.Add(new Models.Person
             {
-                FIO = $"{tbSecondName.Text} {tbFirstName.Text.Substring(0, 1)}.{tbLastName.Text.Substring(0,1)}"
+                FIO = $"{(!tbSecondName.Text.Length.Equals(0) ? tbSecondName.Text : "")} {(!tbFirstName.Text.Length.Equals(0) ? tbFirstName.Text.Substring(0, 1) : "")}.{(!tbLastName.Text.Length.Equals(0) ? tbLastName.Text.Substring(0,1) : "")}"
             });
             if (MessageBox.Show("Пользователь добавлен!\nДобавить еще пользователя?", "Информация", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {

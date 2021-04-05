@@ -49,7 +49,7 @@ namespace JewishCalculationWPF.Windows
         }
         private void btAddProduct_Click(object sender, RoutedEventArgs e)
         {
-            Classes.GetProductsFromCheck getProductsFromCheck = new Classes.GetProductsFromCheck();
+            GetProductsFromCheck getProductsFromCheck = new GetProductsFromCheck();
             DateTime dateTime = new DateTime(dpdateTime.SelectedDate.Value.Year, dpdateTime.SelectedDate.Value.Month, dpdateTime.SelectedDate.Value.Day, int.Parse(tbH.Text), int.Parse(tbM.Text), 0);
             if (getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime))
             {
