@@ -19,7 +19,7 @@ namespace JewishCalculationWPF.Classes
                 if (GetCheckFromOfdRu(dateTime, sum, fiscal_mark, num_fiscal_doc, state_number)) return true;
                 else return false;
             }
-            else //Для Казахстана надо смотреть отдельно
+            if(GetCountry().Equals("Kazakhstan"))
             {
                 if (GetCheckFromConsumer(fiscal_mark, state_number, sum, dateTime))
                 {
@@ -31,6 +31,7 @@ namespace JewishCalculationWPF.Classes
                 }
                 else return false;
             }
+            else return false;
         }
         /// <summary>
         /// Определяет метонахождение по ip
