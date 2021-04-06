@@ -24,15 +24,19 @@
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="ФН чека"/>
-                                        <TextBox Name="tbfiscal_mark" Width="99" Text="924292967220"/>
+                                        <TextBox Name="tbfiscal_mark" Width="110" Text="9289000100239363"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="РНМ чека"/>
-                                        <TextBox Name="tbstate_number" Width="99" Text="010100918831"/>
+                                        <TextBlock Text="ФП/РНМ чека"/>
+                                        <TextBox Name="tbstate_number" Width="80" Text="2308055734"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="ФД чека"/>
+                                        <TextBox Name="tbiCh" Width="111" Text="119008"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Сумма чека"/>
-                                        <TextBox Name="tbsum" Width="99" Text="747"/>
+                                        <TextBox Name="tbsum" Width="91" Text="329,34"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Дата чека"/>
@@ -40,9 +44,9 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Время чека"/>
-                                        <TextBox Name="tbH" Width="33" Text="14"/>
+                                        <TextBox Name="tbH" Width="33" Text="18"/>
                                         <TextBlock Text="ч."/>
-                                        <TextBox Name="tbM" Width="33" Text="37"/>
+                                        <TextBox Name="tbM" Width="33" Text="31"/>
                                         <TextBlock Text="м."/>
                                     </StackPanel>
                                     <Button Name="btAddProduct" Content="Добавить через чек" Click="btAddProduct_Click"/>

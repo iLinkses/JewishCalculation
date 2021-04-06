@@ -139,5 +139,54 @@ namespace JewishCalculationWPF.Classes
             }
             return true;
         }
+
+        /// <summary>
+        /// Заполнение товаров по чеку. Работает только в России
+        /// </summary>
+        /// <param name="tCh">Дата чека</param>
+        /// <param name="sCh">Итоговая сумма чека</param>
+        /// <param name="fnCh">ФН. Номер фискального накопителя</param>
+        /// <param name="iCh">ФД. Номер фискального документа</param>
+        /// <param name="fpCh">ФП. Фискальный признак документа</param>
+        internal void GetCheckFromOfdRu(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
+        {
+            var url = "https://proverkacheka.com/check/get";
+
+            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpRequest.Method = "POST";
+
+            httpRequest.ContentType = "application/x-www-form-urlencoded";
+
+            var data = $"t={tCh:yyyyMMdd}T{tCh:HHmm}&s={sCh}&fn={fnCh}&i={iCh}&fp={fpCh}&n=1";
+
+            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+            {
+                streamWriter.Write(data);
+            }
+
+            var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var json = streamReader.ReadToEnd();
+                JObject jO = JObject.Parse(json);
+                var value = jO["data"]["json"]["items"].Select(i => new
+                {
+                    name = i["name"],
+                    price = i["price"],
+                    quantity = i["quantity"],
+                    sum = i["sum"]
+                }).ToList();
+                foreach (var t in value)
+                {
+                    Models.products.Add(new Models.Product
+                    {
+                        Name = t.name.ToString(),
+                        Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.
+                        Quantity = double.Parse(t.quantity.ToString()),
+                        Sum = double.Parse(t.sum.ToString().Insert(t.sum.ToString().Length - 2, ","))   //Если что, может упасть на этом месте. Лучше сделать проверку на уже существование разделителя.
+                    });
+                }
+            }
+        }
     }
 }
