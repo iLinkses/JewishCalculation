@@ -51,12 +51,11 @@ namespace JewishCalculationWPF.Windows
         {
             GetProductsFromCheck getProductsFromCheck = new GetProductsFromCheck();
             DateTime dateTime = new DateTime(dpdateTime.SelectedDate.Value.Year, dpdateTime.SelectedDate.Value.Month, dpdateTime.SelectedDate.Value.Day, int.Parse(tbH.Text), int.Parse(tbM.Text), 0);
-            /*if (getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime))
+            if (getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime, tbiCh.Text))
             {
                 MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);*/
-            getProductsFromCheck.GetCheckFromOfdRu(dateTime, double.Parse(tbsum.Text), tbfiscal_mark.Text, tbiCh.Text, tbstate_number.Text);
+            else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
         {

@@ -12,17 +12,35 @@ namespace JewishCalculationWPF.Classes
 {
     class GetProductsFromCheck
     {
-        internal bool GetCheck(string fiscal_mark, string state_number, double sum, DateTime dateTime)
+        internal bool GetCheck(string fiscal_mark, string state_number, double sum, DateTime dateTime, string num_fiscal_doc = "")
         {
-            if (GetCheckFromConsumer(fiscal_mark, state_number, sum, dateTime))
+            if (GetCountry().Equals("Russia"))
             {
-                return true;
+                if (GetCheckFromOfdRu(dateTime, sum, fiscal_mark, num_fiscal_doc, state_number)) return true;
+                else return false;
             }
-            else if (GetCheckFromOfd1(dateTime, state_number, fiscal_mark))
+            else //Для Казахстана надо смотреть отдельно
             {
-                return true;
+                if (GetCheckFromConsumer(fiscal_mark, state_number, sum, dateTime))
+                {
+                    return true;
+                }
+                else if (GetCheckFromOfd1(dateTime, state_number, fiscal_mark))
+                {
+                    return true;
+                }
+                else return false;
             }
-            else return false;
+        }
+        /// <summary>
+        /// Определяет метонахождение по ip
+        /// </summary>
+        /// <returns>Название страны</returns>
+        private string GetCountry()
+        {
+            var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{(new WebClient().DownloadString("https://api.ipify.org"))}");
+            JObject whoisJO = JObject.Parse(locationResponse);
+            return whoisJO["country"].ToString();
         }
         /// <summary>
         /// Заполнение товаров по чеку (ВНИМАНИЕ!!! Работает только для казахтелекома consumer.oofd.kz)
@@ -139,7 +157,6 @@ namespace JewishCalculationWPF.Classes
             }
             return true;
         }
-
         /// <summary>
         /// Заполнение товаров по чеку. Работает только в России
         /// </summary>
@@ -148,7 +165,7 @@ namespace JewishCalculationWPF.Classes
         /// <param name="fnCh">ФН. Номер фискального накопителя</param>
         /// <param name="iCh">ФД. Номер фискального документа</param>
         /// <param name="fpCh">ФП. Фискальный признак документа</param>
-        internal void GetCheckFromOfdRu(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
+        internal bool GetCheckFromOfdRu(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
         {
             var url = "https://proverkacheka.com/check/get";
 
@@ -169,23 +186,28 @@ namespace JewishCalculationWPF.Classes
             {
                 var json = streamReader.ReadToEnd();
                 JObject jO = JObject.Parse(json);
-                var value = jO["data"]["json"]["items"].Select(i => new
+                if (jO["code"].ToString().Equals("1"))
                 {
-                    name = i["name"],
-                    price = i["price"],
-                    quantity = i["quantity"],
-                    sum = i["sum"]
-                }).ToList();
-                foreach (var t in value)
-                {
-                    Models.products.Add(new Models.Product
+                    var value = jO["data"]["json"]["items"].Select(i => new
                     {
-                        Name = t.name.ToString(),
-                        Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.
-                        Quantity = double.Parse(t.quantity.ToString()),
-                        Sum = double.Parse(t.sum.ToString().Insert(t.sum.ToString().Length - 2, ","))   //Если что, может упасть на этом месте. Лучше сделать проверку на уже существование разделителя.
-                    });
+                        name = i["name"],
+                        price = i["price"],
+                        quantity = i["quantity"],
+                        sum = i["sum"]
+                    }).ToList();
+                    foreach (var t in value)
+                    {
+                        Models.products.Add(new Models.Product
+                        {
+                            Name = t.name.ToString(),
+                            Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.
+                            Quantity = double.Parse(t.quantity.ToString()),
+                            Sum = double.Parse(t.sum.ToString().Insert(t.sum.ToString().Length - 2, ","))   //Если что, может упасть на этом месте. Лучше сделать проверку на уже существование разделителя.
+                        });
+                    }
+                    return true;
                 }
+                else return false;
             }
         }
     }
