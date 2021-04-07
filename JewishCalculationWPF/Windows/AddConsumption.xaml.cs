@@ -51,15 +51,33 @@ namespace JewishCalculationWPF.Windows
 
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
         {
-            //Хреновая реализация надо копать в MVVM
-            //Добавить условия проверки не был ли уже добавлено потребление по пользователю + если было добавлено, то не добавлять, а изменять количество
-            //Добавить условие проверки на то, что во всех позициях количество 0, и если хоть одно не 0, то создавать лист products
-            List<Models.Product> products = dgProducts.Items.OfType<Models.Product>().Where(p => !p.Quantity.Equals(0)).ToList();//Условие для отбора тех продуктов, к которым персона имеет дело
+            List<Models.Product> products;
+            if (cbPersons.Text.Equals(""))
+            {
+                MessageBox.Show("Для добавления выберите персону!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (dgProducts.Items.OfType<Models.Product>().Count(p => !p.Quantity.Equals(0)) == 0)
+            {
+                MessageBox.Show("Для добавления введите потребление (количество) товара!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (!Models.consumptions.Count.Equals(0) && Models.consumptions.Count(c => c.person.FIO.Equals(cbPersons.Text)) > 0)
+            {
+                MessageBox.Show("Потребление пользователя уже было добавлено!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+                //Добавить условие для выбора редактирования потребления пользователя.
+            }
+
+            products = dgProducts.Items.OfType<Models.Product>().Where(p => !p.Quantity.Equals(0)).ToList();//Условие для отбора тех продуктов, к которым персона имеет дело
             Models.consumptions.Add(new Models.Consumption
             {
                 person = new Models.Person { FIO = Models.persons.Select(p => p.FIO = cbPersons.Text).FirstOrDefault() },
-                products = products 
+                products = products
             });
+
         }
     }
 }
