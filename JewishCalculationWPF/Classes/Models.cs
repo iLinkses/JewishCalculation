@@ -42,6 +42,7 @@ namespace JewishCalculationWPF.Classes
         {
             public Person person { get; set; }
             public List<Product> products { get; set; }
+            //public double Quantity { get; set; }
         }
         internal static List<Person> persons = new List<Person>();
         internal static List<Product> products = new List<Product>();

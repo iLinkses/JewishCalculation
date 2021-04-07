@@ -20,14 +20,13 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Text="Персона" Margin="9 9 3 3"/>
             <ComboBox Name="cbPersons" Width="111" Margin="3 9 3 3"/>
-            <Button Content="Добавить" Margin="3 9 9 3"/>
+            <Button Name="btAddConsumption" Content="Добавить" Margin="3 9 9 3" Click="AddConsumption_Click"/>
         </StackPanel>
         <DataGrid Name="dgProducts" Grid.Row="1" AutoGenerateColumns="False" Margin="9 3 9 9">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Name}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Товар" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Количество"/>
+                <DataGridTextColumn Binding="{Binding Path=Quantity}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Количество"/>
             </DataGrid.Columns>
-
         </DataGrid>
     </Grid>
 </Window>

@@ -25,6 +25,7 @@ namespace JewishCalculationWPF.Windows
             InitializeComponent();
         }
 
+
         private void AddConsumption_Load(object sender, RoutedEventArgs e)
         {
             cbPersons.DisplayMemberPath = "FIO";
@@ -32,7 +33,33 @@ namespace JewishCalculationWPF.Windows
 
             cbPersons.SelectedIndex = -1;
 
-            dgProducts.ItemsSource = Models.products;
+            List<Models.Product> pList = new List<Models.Product>();
+
+            foreach (Models.Product p in Models.products)
+            {
+                pList.Add(new Models.Product
+                {
+                    Name = p.Name,
+                    Price = p.Price,
+                    Quantity = 0,
+                    Sum = p.Sum
+                });
+            }
+
+            dgProducts.ItemsSource = pList;//Models.products;
+        }
+
+        private void AddConsumption_Click(object sender, RoutedEventArgs e)
+        {
+            //Хреновая реализация надо копать в MVVM
+            //Добавить условия проверки не был ли уже добавлено потребление по пользователю + если было добавлено, то не добавлять, а изменять количество
+            //Добавить условие проверки на то, что во всех позициях количество 0, и если хоть одно не 0, то создавать лист products
+            List<Models.Product> products = dgProducts.Items.OfType<Models.Product>().Where(p => !p.Quantity.Equals(0)).ToList();//Условие для отбора тех продуктов, к которым персона имеет дело
+            Models.consumptions.Add(new Models.Consumption
+            {
+                person = new Models.Person { FIO = Models.persons.Select(p => p.FIO = cbPersons.Text).FirstOrDefault() },
+                products = products 
+            });
         }
     }
 }
