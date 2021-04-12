@@ -39,7 +39,7 @@ namespace JewishCalculationWPF.Classes
             int r = 1, c = 3;
 
             ///Названия товаров
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
                 ws.Column(c).Width = 20;
                 ws.Cells[r, c].Style.WrapText = true;
@@ -56,7 +56,7 @@ namespace JewishCalculationWPF.Classes
             ws.Column(c - 1).Width = 14;
             ws.Cells[r, c - 1].Value = "Количество";
 
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
                 ws.Cells[r, c].Value = p.Quantity;
                 c++;
@@ -68,7 +68,7 @@ namespace JewishCalculationWPF.Classes
             ws.Cells[r, c - 1].Style.WrapText = true;
             ws.Cells[r, c - 1].Value = "Цена за шт / кг";
 
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
                 ws.Cells[r, c].Value = p.Price;
                 c++;
@@ -82,7 +82,7 @@ namespace JewishCalculationWPF.Classes
             AddThinBorder(ws, r - 2, 2, r, 2);
             AddThickBorder(ws, r - 2, 2, r, 2);
 
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
                 ws.Cells[r, c].Value = p.Sum;
                 c++;
@@ -104,91 +104,91 @@ namespace JewishCalculationWPF.Classes
             c = 3;
 
             ///Добавление персон
-            foreach (var p in Models.persons)
+            foreach (var p in Models.Persons)
             {
                 ws.Cells[r, c - 1].Value = p;
                 r++;
             }
 
-            ws.Cells[r - Models.persons.Count, c - 1, r - 1, c - 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            ws.Cells[r - Models.Persons.Count, c - 1, r - 1, c - 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
-            AddThinBorder(ws, r - Models.persons.Count, 2, r - 1, 2);
-            AddThickBorder(ws, r - Models.persons.Count, 2, r - 1, 2);
+            AddThinBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
+            AddThickBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
 
 
             ///Добавить количество потребления из Models.consumptions
-            AddThinBorder(ws, r - Models.persons.Count, 3, r - 1, Models.products.Count + 2);
-            AddThickBorder(ws, r - Models.persons.Count, 3, r - 1, Models.products.Count + 2);
+            AddThinBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
+            AddThickBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
 
             ///Проверка количества
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
-                ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[2, c].Address}, \"сошлось\", \"не сошлось\")";
+                ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.Persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[2, c].Address}, \"сошлось\", \"не сошлось\")";
                 c++;
             }
 
-            AddThinBorder(ws, r, 3, r, Models.products.Count + 2);
-            AddThickBorder(ws, r, 3, r, Models.products.Count + 2);
+            AddThinBorder(ws, r, 3, r, Models.Products.Count + 2);
+            AddThickBorder(ws, r, 3, r, Models.Products.Count + 2);
 
             r++;
             c = 3;
 
             ///Добавление персон
-            foreach (var p in Models.persons)
+            foreach (var p in Models.Persons)
             {
                 ws.Cells[r, c - 1].Value = p;
                 r++;
             }
 
-            ws.Cells[r - Models.persons.Count, c - 1, r - 1, c - 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            ws.Cells[r - Models.Persons.Count, c - 1, r - 1, c - 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
-            AddThinBorder(ws, r - Models.persons.Count, 2, r - 1, 2);
-            AddThickBorder(ws, r - Models.persons.Count, 2, r - 1, 2);
+            AddThinBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
+            AddThickBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
 
-            AddThinBorder(ws, r - Models.persons.Count, 3, r - 1, Models.products.Count + 2);
-            AddThickBorder(ws, r - Models.persons.Count, 3, r - 1, Models.products.Count + 2);
+            AddThinBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
+            AddThickBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
 
-            r -= Models.persons.Count;
+            r -= Models.Persons.Count;
 
             ///Добавление суммы по каждому использованному товару
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
-                for (int i = 0; i < Models.persons.Count; i++)
+                for (int i = 0; i < Models.Persons.Count; i++)
                 {
                     ws.Cells[r + i, c].Formula = $"{ws.Cells[3, c].Address}*{ws.Cells[r + i - 7, c].Address}";
                 }
                 c++;
             }
 
-            r += Models.persons.Count;
+            r += Models.Persons.Count;
             c = 3;
             ///Проверка суммы
-            foreach (var p in Models.products)
+            foreach (var p in Models.Products)
             {
-                ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[4, c].Address}, \"сошлось\", \"не сошлось\")";
+                ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.Persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[4, c].Address}, \"сошлось\", \"не сошлось\")";
                 c++;
             }
 
-            AddThinBorder(ws, r, 3, r, Models.products.Count + 2);
-            AddThickBorder(ws, r, 3, r, Models.products.Count + 2);
+            AddThinBorder(ws, r, 3, r, Models.Products.Count + 2);
+            AddThickBorder(ws, r, 3, r, Models.Products.Count + 2);
 
             r -= 7;
 
             ws.Cells[r, c].Style.WrapText = true;
             ws.Cells[r, c].Value = "Сколько кто должен";
             r++;
-            for (int i = 0; i < Models.persons.Count; i++)
+            for (int i = 0; i < Models.Persons.Count; i++)
             {
                 ws.Cells[r + i, c].Formula = $"SUM({ws.Cells[r + i, 3].Address}:{ws.Cells[r + i, c - 1].Address})";
             }
-            r += Models.persons.Count;
-            ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[rfSum, c].Address}, \"сошлось\", \"не сошлось\")";
+            r += Models.Persons.Count;
+            ws.Cells[r, c].Formula = $"IF(SUM({ws.Cells[r - Models.Persons.Count, c].Address}:{ws.Cells[r - 1, c].Address})={ws.Cells[rfSum, c].Address}, \"сошлось\", \"не сошлось\")";
 
-            AddThinBorder(ws, r - Models.persons.Count - 1, Models.products.Count + 3, r, Models.products.Count + 3);
-            AddThickBorder(ws, r - Models.persons.Count - 1, Models.products.Count + 3, r, Models.products.Count + 3);
+            AddThinBorder(ws, r - Models.Persons.Count - 1, Models.Products.Count + 3, r, Models.Products.Count + 3);
+            AddThickBorder(ws, r - Models.Persons.Count - 1, Models.Products.Count + 3, r, Models.Products.Count + 3);
 
-            AddThickBorder(ws, r - Models.persons.Count - 1, Models.products.Count + 3, r - Models.persons.Count - 1, Models.products.Count + 3);
-            AddThickBorder(ws, r, Models.products.Count + 3, r, Models.products.Count + 3);
+            AddThickBorder(ws, r - Models.Persons.Count - 1, Models.Products.Count + 3, r - Models.Persons.Count - 1, Models.Products.Count + 3);
+            AddThickBorder(ws, r, Models.Products.Count + 3, r, Models.Products.Count + 3);
 
             ws.Cells[1, 2, r, c].Style.Font.Name = "Consolas";
             ws.Cells[1, 2, r, c].Style.Font.Size = 9;

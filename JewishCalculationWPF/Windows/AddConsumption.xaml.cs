@@ -1,6 +1,7 @@
 ﻿using JewishCalculationWPF.Classes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,14 +30,14 @@ namespace JewishCalculationWPF.Windows
 
         /// <summary>
         /// Заполняет таблицу потребления
-        /// </summary>
+        /// </summary>E
         /// <param name="lP">Лист продуктов</param>
-        private void Filling_pList(List<Models.Product> lP)
+        private void Filling_pList(ObservableCollection<Models.Product> lP)
         {
             //var t = lP.Select(p => p.Quantity).Except(Models.products.Select(p => p.Quantity));
             //var c = t.Count();
             dgProducts.ItemsSource = null;
-            bool isSame = lP.SequenceEqual(Models.products);
+            bool isSame = lP.SequenceEqual(Models.Products);
             
                 foreach (Models.Product p in lP)
                 {
@@ -54,7 +55,7 @@ namespace JewishCalculationWPF.Windows
         {
             cbPersons.ItemsSource = null;
             cbPersons.DisplayMemberPath = "FIO";
-            cbPersons.ItemsSource = Models.persons;//после добавления пропадает 1й пользователь
+            cbPersons.ItemsSource = Models.Persons;//после добавления пропадает 1й пользователь
 
             cbPersons.SelectedIndex = index;
             //cbPersons.SelectedIndex = -1;
@@ -63,7 +64,7 @@ namespace JewishCalculationWPF.Windows
         {
 
             FillingCbPersons();
-            Filling_pList(Models.products);
+            Filling_pList(Models.Products);
             /*foreach (Models.Product p in Models.products)
             {
                 pList.Add(new Models.Product
@@ -93,7 +94,7 @@ namespace JewishCalculationWPF.Windows
                 return;
             }
 
-            if (!Models.consumptions.Count.Equals(0) && Models.consumptions.Count(c => c.person.FIO.Equals(cbPersons.Text)) > 0)
+            if (!Models.Consumptions.Count.Equals(0) && Models.Consumptions.Count(c => c.person.FIO.Equals(cbPersons.Text)) > 0)
             {
                 //MessageBox.Show("Потребление пользователя уже было добавлено!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 //return;
@@ -101,7 +102,7 @@ namespace JewishCalculationWPF.Windows
                 {
                     pList.Clear();
                     //var C = Models.consumptions.Where(c => c.person.FIO.Equals(cbPersons.Text)).First().products;
-                    Filling_pList(Models.consumptions.Where(c => c.person.FIO.Equals(cbPersons.Text)).First().products);
+                    //Filling_pList(Models.Consumptions.Where(c => c.person.FIO.Equals(cbPersons.Text)).First().products);//Нужно узнать как из list получить ObservableCollection
                     FillingCbPersons(cbPersons.SelectedIndex);
                     /*foreach (var p in C)//творится какаято дичь
                     {
@@ -122,9 +123,9 @@ namespace JewishCalculationWPF.Windows
             }
 
             products = dgProducts.Items.OfType<Models.Product>().Where(p => !p.Quantity.Equals(0)).ToList();//Условие для отбора тех продуктов, к которым персона имеет дело
-            Models.consumptions.Add(new Models.Consumption
+            Models.Consumptions.Add(new Models.Consumption
             {
-                person = new Models.Person { FIO = Models.persons.Select(p => p.FIO = cbPersons.Text).FirstOrDefault() },
+                person = new Models.Person { FIO = Models.Persons.Select(p => p.FIO = cbPersons.Text).FirstOrDefault() },
                 products = products
             });
 

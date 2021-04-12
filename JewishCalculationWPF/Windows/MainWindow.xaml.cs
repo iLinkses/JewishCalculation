@@ -27,7 +27,7 @@ namespace JewishCalculationWPF.Windows
         }
         private void Menu_Click(object sender, RoutedEventArgs e)//Не всегда срабатывает
         {
-            if (Models.products.Count == 0 || Models.persons.Count == 0)
+            if (Models.Products.Count == 0 || Models.Persons.Count == 0)
             {
                 AddConsumption.IsEnabled = false;
             }
@@ -62,10 +62,10 @@ namespace JewishCalculationWPF.Windows
             AddConsumption addConsumption = new AddConsumption();
             addConsumption.Owner = this;
             addConsumption.ShowDialog();
-            if (Models.consumptions != null && Models.consumptions.Count != 0)
-            {
+            //if (Models.consumptions != null && Models.consumptions.Count != 0)
+            //{
 
-            }
+            //}
         }
     }
 }

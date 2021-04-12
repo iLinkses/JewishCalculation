@@ -20,7 +20,7 @@ namespace JewishCalculationWPF.Windows
                 MessageBox.Show("Для добавления введите данные товара!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Models.products.Add(new Models.Product
+            Models.Products.Add(new Models.Product
             {
                 Name = tbName.Text,
                 Price = double.Parse(tbPrice.Text),

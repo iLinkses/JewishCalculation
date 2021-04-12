@@ -23,7 +23,13 @@ namespace JewishCalculationWPF.Windows
         public AddPerson()
         {
             InitializeComponent();
-            DataContext = new ViewModels.PersonViewModel();
+            ViewModels.PersonViewModel VMP = new ViewModels.PersonViewModel();
+            DataContext = VMP;
+            if(VMP.CloseAction == null)
+            {
+                VMP.CloseAction = new Action(this.Close);
+            }
+            
         }
         private void AddPerson_Click(object sender, RoutedEventArgs e)
         {
@@ -32,7 +38,7 @@ namespace JewishCalculationWPF.Windows
                 MessageBox.Show("Для добавления введите данные пользователя!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Models.persons.Add(new Models.Person
+            Models.Persons.Add(new Models.Person
             {
                 FIO = $"{(!tbSecondName.Text.Length.Equals(0) ? tbSecondName.Text : "")} {(!tbFirstName.Text.Length.Equals(0) ? tbFirstName.Text.Substring(0, 1) : "")}.{(!tbLastName.Text.Length.Equals(0) ? tbLastName.Text.Substring(0,1) : "")}"
             });

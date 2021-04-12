@@ -74,7 +74,7 @@ namespace JewishCalculationWPF.Classes
                 }).ToList();
                 foreach (var t in value)
                 {
-                    Models.products.Add(new Models.Product
+                    Models.Products.Add(new Models.Product
                     {
                         Name = t.name.ToString(),
                         Price = double.Parse(t.price.ToString()),
@@ -148,7 +148,7 @@ namespace JewishCalculationWPF.Classes
                     else continue;
                 }
 
-                Models.products.Add(new Models.Product
+                Models.Products.Add(new Models.Product
                 {
                     Name = node.SelectSingleNode("text()").InnerText.Trim(),
                     Price = double.Parse(ready_ticket__item.Substring(0, ready_ticket__item.IndexOf('x')).Trim(), CultureInfo.InvariantCulture),
@@ -198,7 +198,7 @@ namespace JewishCalculationWPF.Classes
                     }).ToList();
                     foreach (var t in value)
                     {
-                        Models.products.Add(new Models.Product
+                        Models.Products.Add(new Models.Product
                         {
                             Name = t.name.ToString(),
                             Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -141,8 +142,8 @@ namespace JewishCalculationWPF.Classes
 
             //public double Quantity { get; set; }
         }
-        internal static List<Person> persons = new List<Person>();
-        internal static List<Product> products = new List<Product>();
-        internal static List<Consumption> consumptions = new List<Consumption>();
+        internal static ObservableCollection<Person> Persons = new ObservableCollection<Person>();
+        internal static ObservableCollection<Product> Products = new ObservableCollection<Product>();
+        internal static ObservableCollection<Consumption> Consumptions = new ObservableCollection<Consumption>();
     }
 }

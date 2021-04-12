@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace JewishCalculationWPF.Classes
 {
@@ -20,7 +21,13 @@ namespace JewishCalculationWPF.Classes
             private RelayCommand addCommand;
 
             #region Свойства
-            public ObservableCollection<Models.Person> Persons { get; set; }
+            /// <summary>
+            /// Для закрытия окна
+            /// </summary>
+            public Action CloseAction { get; set; }
+            /// <summary>
+            /// Свойство команды, которое добавляет пользователя в лист Persons
+            /// </summary>
             public RelayCommand AddCommand
             {
                 get
@@ -31,7 +38,8 @@ namespace JewishCalculationWPF.Classes
                         {
                             FIO = $"{(!secondName.Length.Equals(0) ? secondName : "")} {(!firstName.Length.Equals(0) ? firstName.Substring(0, 1) : "")}.{(!lastName.Length.Equals(0) ? lastName.Substring(0, 1) : "")}"
                         };
-                        Persons.Add(person);
+                        Models.Persons.Add(person);
+                        ShowDoneMsg();
                     }));
                 }
             }
@@ -75,19 +83,28 @@ namespace JewishCalculationWPF.Classes
 
             public PersonViewModel()
             {
-                Persons = new ObservableCollection<Models.Person>();
             }
-
+            private void ShowDoneMsg()
+            {
+                if (MessageBox.Show("Пользователь добавлен!\nДобавить еще пользователя?", "Информация", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    SecondName = string.Empty;
+                    FirstName = string.Empty;
+                    LastName = string.Empty;
+                }
+                else CloseAction();
+            }
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged([CallerMemberName] string prop = "")
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
             }
         }
+
         internal class ProductViewModel : INotifyPropertyChanged
         {
             private Models.Product product;
-            public ObservableCollection<Models.Product> Products { get; set; }
+            //public ObservableCollection<Models.Product> Products { get; set; }
             public Models.Product Product
             {
                 get { return product; }
@@ -106,7 +123,7 @@ namespace JewishCalculationWPF.Classes
         internal class Consumption : INotifyPropertyChanged
         {
             private Models.Consumption _consumption;
-            public ObservableCollection<Models.Consumption> Consumptions { get; set; }
+            //public ObservableCollection<Models.Consumption> Consumptions { get; set; }
             public Models.Consumption consumption
             {
                 get { return _consumption; }
