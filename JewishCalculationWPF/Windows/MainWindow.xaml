@@ -65,7 +65,7 @@
             <Grid>
                 <TabControl>
                     <TabItem Header="Общая информация">
-                        <DataGrid AutoGenerateColumns="False" IsEnabled="False" ColumnWidth="*">
+                        <DataGrid AutoGenerateColumns="False" IsEnabled="False" ColumnWidth="*" >
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{x:Null}" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="ФИО" IsReadOnly="True"/>
                                 <DataGridTextColumn Binding="{x:Null}" CanUserReorder="False" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="Сумма" IsReadOnly="True"/>
@@ -86,7 +86,7 @@
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal">
                                 <TextBlock Text="Персона" Margin="9 9 3 3"/>
-                                <ComboBox Width="111" Margin="3 9 3 3"/>
+                                <ComboBox ItemsSource="{Binding Path=Models.persons}" DisplayMemberPath="FIO" Width="111" Margin="3 9 3 3"/>
                                 <TextBlock Text="Общая сумма:" Margin="3 9 9 3"/>
                             </StackPanel>
                             <DataGrid Grid.Row="1" AutoGenerateColumns="False" Margin="9 3 9 9" ColumnWidth="*">

@@ -95,6 +95,7 @@
     <Compile Include="Classes\GetProductsFromCheck.cs" />
     <Compile Include="Classes\Models.cs" />
     <Compile Include="Classes\ToExcel.cs" />
+    <Compile Include="Classes\ViewModels.cs" />
     <Compile Include="Windows\AddConsumption.xaml.cs">
       <DependentUpon>AddConsumption.xaml</DependentUpon>
     </Compile>

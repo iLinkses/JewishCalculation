@@ -25,17 +25,46 @@ namespace JewishCalculationWPF.Windows
             InitializeComponent();
         }
 
+        List<Models.Product> pList = new List<Models.Product>();
 
+        /// <summary>
+        /// Заполняет таблицу потребления
+        /// </summary>
+        /// <param name="lP">Лист продуктов</param>
+        private void Filling_pList(List<Models.Product> lP)
+        {
+            //var t = lP.Select(p => p.Quantity).Except(Models.products.Select(p => p.Quantity));
+            //var c = t.Count();
+            dgProducts.ItemsSource = null;
+            bool isSame = lP.SequenceEqual(Models.products);
+            
+                foreach (Models.Product p in lP)
+                {
+                    pList.Add(new Models.Product
+                    {
+                        Name = p.Name,
+                        Price = p.Price,
+                        Quantity = isSame ? 0 : p.Quantity,
+                        Sum = p.Sum
+                    });
+                }
+            dgProducts.ItemsSource = pList;
+        }
+        private void FillingCbPersons(int index = -1)
+        {
+            cbPersons.ItemsSource = null;
+            cbPersons.DisplayMemberPath = "FIO";
+            cbPersons.ItemsSource = Models.persons;//после добавления пропадает 1й пользователь
+
+            cbPersons.SelectedIndex = index;
+            //cbPersons.SelectedIndex = -1;
+        }
         private void AddConsumption_Load(object sender, RoutedEventArgs e)
         {
-            cbPersons.DisplayMemberPath = "FIO";
-            cbPersons.ItemsSource = Models.persons;
 
-            cbPersons.SelectedIndex = -1;
-
-            List<Models.Product> pList = new List<Models.Product>();
-
-            foreach (Models.Product p in Models.products)
+            FillingCbPersons();
+            Filling_pList(Models.products);
+            /*foreach (Models.Product p in Models.products)
             {
                 pList.Add(new Models.Product
                 {
@@ -46,7 +75,7 @@ namespace JewishCalculationWPF.Windows
                 });
             }
 
-            dgProducts.ItemsSource = pList;//Models.products;
+            dgProducts.ItemsSource = pList;//Models.products;*/
         }
 
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
@@ -66,9 +95,30 @@ namespace JewishCalculationWPF.Windows
 
             if (!Models.consumptions.Count.Equals(0) && Models.consumptions.Count(c => c.person.FIO.Equals(cbPersons.Text)) > 0)
             {
-                MessageBox.Show("Потребление пользователя уже было добавлено!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-                //Добавить условие для выбора редактирования потребления пользователя.
+                //MessageBox.Show("Потребление пользователя уже было добавлено!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                //return;
+                if (MessageBox.Show("Потребление пользователя уже было добавлено!\nИзменить потребление?", "Информация", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    pList.Clear();
+                    //var C = Models.consumptions.Where(c => c.person.FIO.Equals(cbPersons.Text)).First().products;
+                    Filling_pList(Models.consumptions.Where(c => c.person.FIO.Equals(cbPersons.Text)).First().products);
+                    FillingCbPersons(cbPersons.SelectedIndex);
+                    /*foreach (var p in C)//творится какаято дичь
+                    {
+                        pList.Add(new Models.Product
+                        {
+                            Name = p.Name,
+                            Price = p.Price,
+                            Quantity = 0,
+                            Sum = p.Sum
+                        });
+                    }
+                    dgProducts.ItemsSource = pList;*/
+                }
+                else
+                {
+                    return;
+                }
             }
 
             products = dgProducts.Items.OfType<Models.Product>().Where(p => !p.Quantity.Equals(0)).ToList();//Условие для отбора тех продуктов, к которым персона имеет дело

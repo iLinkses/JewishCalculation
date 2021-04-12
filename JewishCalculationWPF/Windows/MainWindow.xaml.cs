@@ -62,6 +62,10 @@ namespace JewishCalculationWPF.Windows
             AddConsumption addConsumption = new AddConsumption();
             addConsumption.Owner = this;
             addConsumption.ShowDialog();
+            if (Models.consumptions != null && Models.consumptions.Count != 0)
+            {
+
+            }
         }
     }
 }
