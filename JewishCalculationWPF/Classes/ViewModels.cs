@@ -13,17 +13,71 @@ namespace JewishCalculationWPF.Classes
     {
         internal class PersonViewModel : INotifyPropertyChanged
         {
-            private Models.Person person;
+            //private Models.Person person;
+            private string secondName;
+            private string firstName;
+            private string lastName;
+            private RelayCommand addCommand;
+
+            #region Свойства
             public ObservableCollection<Models.Person> Persons { get; set; }
-            public Models.Person Person
+            public RelayCommand AddCommand
             {
-                get { return person; }
-                set
+                get
                 {
-                    person = value;
-                    OnPropertyChanged("Person");
+                    return addCommand ?? (addCommand = new RelayCommand(obj =>
+                    {
+                        Models.Person person = new Models.Person
+                        {
+                            FIO = $"{(!secondName.Length.Equals(0) ? secondName : "")} {(!firstName.Length.Equals(0) ? firstName.Substring(0, 1) : "")}.{(!lastName.Length.Equals(0) ? lastName.Substring(0, 1) : "")}"
+                        };
+                        Persons.Add(person);
+                    }));
                 }
             }
+            public string SecondName
+            {
+                get
+                {
+                    return secondName;
+                }
+                set
+                {
+                    secondName = value;
+                    OnPropertyChanged("SecondName");
+                }
+            }
+            public string FirstName
+            {
+                get
+                {
+                    return firstName;
+                }
+                set
+                {
+                    firstName = value;
+                    OnPropertyChanged("FirstName");
+                }
+            }
+            public string LastName
+            {
+                get
+                {
+                    return lastName;
+                }
+                set
+                {
+                    lastName = value;
+                    OnPropertyChanged("LastName");
+                }
+            }
+            #endregion
+
+            public PersonViewModel()
+            {
+                Persons = new ObservableCollection<Models.Person>();
+            }
+
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged([CallerMemberName] string prop = "")
             {

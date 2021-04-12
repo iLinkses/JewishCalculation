@@ -23,6 +23,7 @@ namespace JewishCalculationWPF.Windows
         public AddPerson()
         {
             InitializeComponent();
+            DataContext = new ViewModels.PersonViewModel();
         }
         private void AddPerson_Click(object sender, RoutedEventArgs e)
         {

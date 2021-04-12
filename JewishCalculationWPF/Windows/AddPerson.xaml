@@ -26,9 +26,9 @@
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Имя" Margin="9 3 9 3"/>
         <TextBlock Grid.Column="0" Grid.Row="2" Text="Отчество" Margin="9 3 9 3"/>
 
-        <TextBox Name="tbSecondName" Grid.Column="1" Grid.Row="0" Margin="9 9 9 3"/>
-        <TextBox Name="tbFirstName" Grid.Column="1" Grid.Row="1" Margin="9 3 9 3"/>
-        <TextBox Name="tbLastName" Grid.Column="1" Grid.Row="2" Margin="9 3 9 3"/>
-        <Button Name="btAddPerson" Grid.Column="1" Grid.Row="3" Content="Добавить" Margin="9 3 9 9" Click="AddPerson_Click"/>
+        <TextBox Name="tbSecondName" Grid.Column="1" Grid.Row="0" Margin="9 9 9 3" Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Name="tbFirstName" Grid.Column="1" Grid.Row="1" Margin="9 3 9 3" Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Name="tbLastName" Grid.Column="1" Grid.Row="2" Margin="9 3 9 3" Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Name="btAddPerson" Grid.Column="1" Grid.Row="3" Content="Добавить" Margin="9 3 9 9" Command="{Binding AddCommand}"/> <!--Click="AddPerson_Click"-->
     </Grid>
 </Window>
