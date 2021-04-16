@@ -37,7 +37,7 @@ namespace JewishCalculationWPF.Classes
         /// Определяет метонахождение по ip
         /// </summary>
         /// <returns>Название страны</returns>
-        private string GetCountry()
+        internal string GetCountry()
         {
             var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{(new WebClient().DownloadString("https://api.ipify.org"))}");
             JObject whoisJO = JObject.Parse(locationResponse);

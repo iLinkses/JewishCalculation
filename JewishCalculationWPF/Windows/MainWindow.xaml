@@ -54,12 +54,18 @@
                             </MenuItem>
                         </MenuItem>
                         <MenuItem Header="Добавить потребление" Name="AddConsumption" Click="AddConsumption_Click" IsEnabled="False"/>
+                        <MenuItem Header="Создать таблицу .xlsx" Name="CreateXLSX" Click="CreateXLSX_Click" IsEnabled="False"/>
                     </MenuItem>
                 </Menu>
             </Grid>
             <Grid DockPanel.Dock="Bottom">
                 <StatusBar>
-                    <StatusBarItem Content="Что-то"/>
+                    <StatusBarItem>
+                        <Image Name="CountryFlag" Source=""/>
+                    </StatusBarItem>
+                    <StatusBarItem>
+                        <TextBlock Name="lblCountry" />
+                    </StatusBarItem>
                 </StatusBar>
             </Grid>
             <Grid>

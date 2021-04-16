@@ -11,7 +11,7 @@ namespace JewishCalculationWPF.Classes
 {
     class ToExcel
     {
-        internal void GetExcel()
+        internal FileInfo GetExcel()
         {
             using (ExcelPackage excelPackage = new ExcelPackage())
             {
@@ -22,13 +22,14 @@ namespace JewishCalculationWPF.Classes
                 //excelPackage.Workbook.Properties.Subject = "EPPlus demo export data";
                 excelPackage.Workbook.Properties.Created = DateTime.Now;
                 //Create the WorkSheet
-                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("Горячие источники");
+                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add($"{DateTime.Now:dd_MM_yyyy}");
 
                 AddCells(worksheet);
 
                 //Save your file
                 FileInfo fi = new FileInfo(Directory.GetCurrentDirectory() + $"\\Еврейский расчет {DateTime.Now:dd_MM_yyyy}.xlsx");
-                excelPackage.SaveAs(fi);
+                excelPackage.SaveAs(fi);//Добавить проверку на существование файла, с предложением о перезаписи
+                return fi;
             }
         }
 
@@ -106,7 +107,7 @@ namespace JewishCalculationWPF.Classes
             ///Добавление персон
             foreach (var p in Models.Persons)
             {
-                ws.Cells[r, c - 1].Value = p;
+                ws.Cells[r, c - 1].Value = p.FIO;
                 r++;
             }
 
@@ -115,8 +116,23 @@ namespace JewishCalculationWPF.Classes
             AddThinBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
             AddThickBorder(ws, r - Models.Persons.Count, 2, r - 1, 2);
 
+            r -= Models.Persons.Count;
 
-            ///Добавить количество потребления из Models.consumptions
+            ///Проверяем количество персон и количество потреблений по персонам. Если одинаково, то добавляем потребление
+            if (Models.Persons.Count == Models.Consumptions.Count)
+            {
+                foreach (var cons in Models.Consumptions)
+                {
+                    foreach (var p in cons.products)
+                    {
+                        ws.Cells[r, c].Value = p.Quantity;
+                        c++;
+                    }
+                    r++;
+                    c = 3;
+                }
+            }
+
             AddThinBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
             AddThickBorder(ws, r - Models.Persons.Count, 3, r - 1, Models.Products.Count + 2);
 
@@ -136,7 +152,7 @@ namespace JewishCalculationWPF.Classes
             ///Добавление персон
             foreach (var p in Models.Persons)
             {
-                ws.Cells[r, c - 1].Value = p;
+                ws.Cells[r, c - 1].Value = p.FIO;
                 r++;
             }
 
@@ -155,8 +171,10 @@ namespace JewishCalculationWPF.Classes
             {
                 for (int i = 0; i < Models.Persons.Count; i++)
                 {
-                    ws.Cells[r + i, c].Formula = $"{ws.Cells[3, c].Address}*{ws.Cells[r + i - 7, c].Address}";
+                    ws.Cells[r, c].Formula = $"{ws.Cells[r - i - (Models.Persons.Count + 4), c].Address}*{ws.Cells[r - i - (Models.Persons.Count + 1), c].Address}";
+                    r++;
                 }
+                r -= Models.Persons.Count;
                 c++;
             }
 
@@ -172,7 +190,7 @@ namespace JewishCalculationWPF.Classes
             AddThinBorder(ws, r, 3, r, Models.Products.Count + 2);
             AddThickBorder(ws, r, 3, r, Models.Products.Count + 2);
 
-            r -= 7;
+            r -= Models.Products.Count + 2;
 
             ws.Cells[r, c].Style.WrapText = true;
             ws.Cells[r, c].Value = "Сколько кто должен";

@@ -81,9 +81,6 @@ namespace JewishCalculationWPF.Classes
             }
             #endregion
 
-            public PersonViewModel()
-            {
-            }
             private void ShowDoneMsg()
             {
                 if (MessageBox.Show("Пользователь добавлен!\nДобавить еще пользователя?", "Информация", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -103,17 +100,10 @@ namespace JewishCalculationWPF.Classes
 
         internal class ProductViewModel : INotifyPropertyChanged
         {
-            private Models.Product product;
+            private RelayCommand addCommand;
+            //private Models.Product product;
             //public ObservableCollection<Models.Product> Products { get; set; }
-            public Models.Product Product
-            {
-                get { return product; }
-                set
-                {
-                    product = value;
-                    OnPropertyChanged("Product");
-                }
-            }
+           
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged([CallerMemberName] string prop = "")
             {

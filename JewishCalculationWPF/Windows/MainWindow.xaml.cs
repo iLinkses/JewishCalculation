@@ -1,7 +1,9 @@
 ﻿using JewishCalculationWPF.Classes;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +26,14 @@ namespace JewishCalculationWPF.Windows
         public MainWindow()
         {
             InitializeComponent();
+            JObject siJ = GetWhoisJO();
+            lblCountry.Text = $"ip: {siJ["ip"]}; страна: {siJ["country"]}; город: {siJ["city"]}; валюта: {siJ["currency_code"]}";
+            ImageSourceConverter isc = new ImageSourceConverter();
+        }
+        private JObject GetWhoisJO()
+        {
+            var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{(new WebClient().DownloadString("https://api.ipify.org"))}");
+            return JObject.Parse(locationResponse);
         }
         private void Menu_Click(object sender, RoutedEventArgs e)//Не всегда срабатывает
         {
@@ -31,7 +41,12 @@ namespace JewishCalculationWPF.Windows
             {
                 AddConsumption.IsEnabled = false;
             }
-            else AddConsumption.IsEnabled = true;
+            else
+            {
+                AddConsumption.IsEnabled = true;
+                if (Models.Consumptions.Count == 0) CreateXLSX.IsEnabled = false;
+                else CreateXLSX.IsEnabled = true;
+            } 
         }
         private void AddPerson_Click(object sender, RoutedEventArgs e)
         {
@@ -56,6 +71,7 @@ namespace JewishCalculationWPF.Windows
                 MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            Menu_Click(sender, e);
         }
         private void AddConsumption_Click(object sender, RoutedEventArgs e)
         {
@@ -66,6 +82,12 @@ namespace JewishCalculationWPF.Windows
             //{
 
             //}
+        }
+
+        private void CreateXLSX_Click(object sender, RoutedEventArgs e)
+        {
+            ToExcel toExcel = new ToExcel();
+            toExcel.GetExcel();
         }
     }
 }
