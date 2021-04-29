@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 
@@ -19,7 +22,7 @@ namespace JewishCalculationWPF.Classes
                 if (GetCheckFromOfdRu(dateTime, sum, fiscal_mark, num_fiscal_doc, state_number)) return true;
                 else return false;
             }
-            if(GetCountry().Equals("Kazakhstan"))
+            if (GetCountry().Equals("Kazakhstan"))
             {
                 if (GetCheckFromConsumer(fiscal_mark, state_number, sum, dateTime))
                 {
@@ -37,7 +40,7 @@ namespace JewishCalculationWPF.Classes
         /// Определяет метонахождение по ip
         /// </summary>
         /// <returns>Название страны</returns>
-        internal string GetCountry()
+        private string GetCountry()
         {
             var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{(new WebClient().DownloadString("https://api.ipify.org"))}");
             JObject whoisJO = JObject.Parse(locationResponse);
@@ -168,7 +171,7 @@ namespace JewishCalculationWPF.Classes
         /// <param name="fpCh">ФП. Фискальный признак документа</param>
         internal bool GetCheckFromOfdRu(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
         {
-            var url = "https://proverkacheka.com/check/get";
+            var url = "https://proverkacheka.com/api/v1/check/get";//"https://proverkacheka.com/check/get";
 
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
             httpRequest.Method = "POST";
@@ -210,6 +213,104 @@ namespace JewishCalculationWPF.Classes
                 }
                 else return false;
             }
+        }
+    }
+
+    abstract class FromCheck { }
+
+    class FromCheckKZ : FromCheck
+    {
+
+    }
+
+    class FromCheckRU : FromCheck
+    {
+        public bool Done { get; private set; }
+        public FromCheckRU(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
+        {
+            var url = "https://proverkacheka.com/api/v1/check/get";
+
+            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpRequest.Method = "POST";
+
+            httpRequest.ContentType = "application/x-www-form-urlencoded";
+
+            var data = $"t={tCh:yyyyMMdd}T{tCh:HHmm}&s={sCh}&fn={fnCh}&i={iCh}&fp={fpCh}&n=1";
+
+
+            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+            {
+                streamWriter.Write(data);
+            }
+
+            var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var json = streamReader.ReadToEnd();
+                JObject jO = JObject.Parse(json);
+                if (jO["code"].ToString().Equals("1"))
+                {
+                    var value = jO["data"]["json"]["items"].Select(i => new
+                    {
+                        name = i["name"],
+                        price = i["price"],
+                        quantity = i["quantity"],
+                        sum = i["sum"]
+                    }).ToList();
+                    foreach (var t in value)
+                    {
+                        Models.Products.Add(new Models.Product
+                        {
+                            Name = t.name.ToString(),
+                            Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.
+                            Quantity = double.Parse(t.quantity.ToString()),
+                            Sum = double.Parse(t.sum.ToString().Insert(t.sum.ToString().Length - 2, ","))   //Если что, может упасть на этом месте. Лучше сделать проверку на уже существование разделителя.
+                        });
+                    }
+                    Done = true;
+                }
+                else Done = false;
+            }
+        }
+    }
+
+    abstract class Check
+    {
+        public abstract bool Done { get; set; }
+        public abstract FromCheck GetFromCheck();
+    }
+
+    class CheckFromCheckKZ : Check
+    {
+        public override bool Done { get; set; }
+        public override FromCheck GetFromCheck()
+        {
+            return new FromCheckKZ();
+        }
+    }
+
+    class CheckFromCheckRU : Check
+    {
+        public override bool Done { get; set; }
+
+        private DateTime DateTime { get; set; }
+        private double Sum { get; set; }
+        private string Fiscal_mark { get; set; }
+        private string Num_fiscal_doc { get; set; }
+        private string State_number { get; set; }
+        public CheckFromCheckRU(string fiscal_mark, string state_number, double sum, DateTime dateTime, string num_fiscal_doc = "")
+        {
+            DateTime = dateTime;
+            Sum = sum;
+            Fiscal_mark = fiscal_mark;
+            Num_fiscal_doc = num_fiscal_doc;
+            State_number = state_number;
+        }
+        public override FromCheck GetFromCheck()
+        {
+            FromCheckRU fromCheckRU = new FromCheckRU(DateTime, Sum, Fiscal_mark, Num_fiscal_doc, State_number);
+            Done = fromCheckRU.Done;
+            return fromCheckRU;
         }
     }
 }
