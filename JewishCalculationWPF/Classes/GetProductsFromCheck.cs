@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace JewishCalculationWPF.Classes
 {
@@ -228,15 +229,22 @@ namespace JewishCalculationWPF.Classes
         public bool Done { get; private set; }
         public FromCheckRU(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
         {
-            var url = "https://proverkacheka.com/api/v1/check/get";
+            var url = "https://check.ofd.ru/Document/FetchReceiptFromFns";
 
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
             httpRequest.Method = "POST";
 
-            httpRequest.ContentType = "application/x-www-form-urlencoded";
+            httpRequest.ContentType = "application/json";
 
-            var data = $"t={tCh:yyyyMMdd}T{tCh:HHmm}&s={sCh}&fn={fnCh}&i={iCh}&fp={fpCh}&n=1";
-
+            var data = JsonConvert.SerializeObject(new
+            {
+                TotalSum = sCh,
+                FnNumber = fnCh,
+                ReceiptOperationType = "1",
+                DocNumber = iCh,
+                DocFiscalSign = fpCh,
+                DocDateTime = tCh
+            });
 
             using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
             {
@@ -244,33 +252,33 @@ namespace JewishCalculationWPF.Classes
             }
 
             var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+
+            if (httpResponse.StatusCode == HttpStatusCode.OK)
             {
-                var json = streamReader.ReadToEnd();
-                JObject jO = JObject.Parse(json);
-                if (jO["code"].ToString().Equals("1"))
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
-                    var value = jO["data"]["json"]["items"].Select(i => new
+                    var Content = streamReader.ReadToEnd();
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(Content);
+
+                    ///получаем ноды между комментариев
+                    var tovarNodes = doc.DocumentNode.SelectNodes("//*[preceding::comment()[.=\"<!-- Products -->\"]][following::comment()[.=\"<!-- /Products -->\"]]/div[@class=\"ifw-cols ifw-cols-2\"]");//Работает!!! ну наканецта!
+
+                    foreach (var nodes in tovarNodes)
                     {
-                        name = i["name"],
-                        price = i["price"],
-                        quantity = i["quantity"],
-                        sum = i["sum"]
-                    }).ToList();
-                    foreach (var t in value)
-                    {
+                        string Data = Regex.Replace(nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-right\"]").FirstOrDefault().InnerText.Replace("\r\n", ""), "[ ]+", " ").Trim();
                         Models.Products.Add(new Models.Product
                         {
-                            Name = t.name.ToString(),
-                            Price = double.Parse(t.price.ToString().Insert(t.price.ToString().Length - 2, ",")),    //В json-е приходили числа без разделителя дробной части.
-                            Quantity = double.Parse(t.quantity.ToString()),
-                            Sum = double.Parse(t.sum.ToString().Insert(t.sum.ToString().Length - 2, ","))   //Если что, может упасть на этом месте. Лучше сделать проверку на уже существование разделителя.
+                            Name = nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-left\"]").FirstOrDefault().InnerText.Replace("&quot;", ""),
+                            Price = double.Parse(new Regex(@"X(.*?)=").Match(Data).Groups[1].Value.Trim(), CultureInfo.InvariantCulture),
+                            Quantity = double.Parse(Data.Substring(0, Data.IndexOf('X')).Trim(), CultureInfo.InvariantCulture),
+                            Sum = double.Parse(new Regex(@"=(.*)").Match(Data).Groups[1].Value.Trim(), CultureInfo.InvariantCulture)
                         });
                     }
-                    Done = true;
                 }
-                else Done = false;
+                Done = true;
             }
+            else Done = false;
         }
     }
 
