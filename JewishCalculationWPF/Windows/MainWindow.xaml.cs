@@ -67,26 +67,24 @@ namespace JewishCalculationWPF.Windows
             DateTime dateTime = new DateTime(dpdateTime.SelectedDate.Value.Year, dpdateTime.SelectedDate.Value.Month, dpdateTime.SelectedDate.Value.Day, int.Parse(tbH.Text), int.Parse(tbM.Text), 0);
 
 
-            Check check = new CheckFromCheckRU(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime, tbiCh.Text);
-            FromCheck fromCheck = check.GetFromCheck();
+            //Check check = new CheckFromCheckRU(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime, tbiCh.Text);
+            //FromCheck fromCheck = check.GetFromCheck();
 
-            if (check.Done)
+            //if (check.Done)
+            //{
+            //    MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+            //else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+
+
+            GetProductsFromCheck getProductsFromCheck = new GetProductsFromCheck();
+            getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime, tbiCh.Text);
+
+            if (getProductsFromCheck.Done)
             {
                 MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-
-
-            /*GetProductsFromCheck getProductsFromCheck = new GetProductsFromCheck();
-            
-
-
-
-            if (getProductsFromCheck.GetCheck(tbfiscal_mark.Text, tbstate_number.Text, double.Parse(tbsum.Text), dateTime, tbiCh.Text))
-            {
-                MessageBox.Show("Данные с чека добавлены!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else MessageBox.Show("При загрузке данных с чека возникла ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);*/
             Menu_Click(sender, e);
         }
         private void AddConsumption_Click(object sender, RoutedEventArgs e)

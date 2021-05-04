@@ -16,37 +16,68 @@ namespace JewishCalculationWPF.Classes
 {
     class GetProductsFromCheck
     {
-        internal bool GetCheck(string fiscal_mark, string state_number, double sum, DateTime dateTime, string num_fiscal_doc = "")
+        public bool Done { get; private set; }
+
+        /// <value>Подключение к интернету</value>
+        private bool CheckForInternetConnection
         {
-            if (GetCountry().Equals("Russia"))
+            get
             {
-                if (GetCheckFromOfdRu(dateTime, sum, fiscal_mark, num_fiscal_doc, state_number)) return true;
-                else return false;
+                try
+                {
+                    using (var client = new WebClient())
+                    using (client.OpenRead("http://google.com/generate_204"))
+                        return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
-            if (GetCountry().Equals("Kazakhstan"))
+        }
+
+        /// <value>Метонахождение по ip</value>
+        private string Country
+        {
+            get
+            {
+                var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{new WebClient().DownloadString("https://api.ipify.org")}");
+                JObject whoisJO = JObject.Parse(locationResponse);
+                return whoisJO["country"].ToString();
+            }
+        }
+
+        internal void GetCheck(string fiscal_mark, string state_number, double sum, DateTime dateTime, string num_fiscal_doc = "")
+        {
+            if (!CheckForInternetConnection)
+            {
+                MessageBox.Show("Нет подключения к интернету!\nПроверьте подключение к интернету.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                this.Done = false;
+            }
+            if (Country.Equals("Russia"))
+            {
+                Check check = new CheckFromCheckRU(fiscal_mark, state_number, sum, dateTime, num_fiscal_doc);
+                FromCheck fromCheck = check.GetFromCheck();
+                this.Done = check.Done;
+
+                /*if (GetCheckFromOfdRu(dateTime, sum, fiscal_mark, num_fiscal_doc, state_number)) return true;
+                else return false;*/
+            }
+            else if (Country.Equals("Kazakhstan"))
             {
                 if (GetCheckFromConsumer(fiscal_mark, state_number, sum, dateTime))
                 {
-                    return true;
+                    this.Done = true;
                 }
                 else if (GetCheckFromOfd1(dateTime, state_number, fiscal_mark))
                 {
-                    return true;
+                    this.Done = true;
                 }
-                else return false;
+                else this.Done = false;
             }
-            else return false;
+            else this.Done = false;
         }
-        /// <summary>
-        /// Определяет метонахождение по ip
-        /// </summary>
-        /// <returns>Название страны</returns>
-        private string GetCountry()
-        {
-            var locationResponse = new WebClient().DownloadString($"https://ipwhois.app/json/{(new WebClient().DownloadString("https://api.ipify.org"))}");
-            JObject whoisJO = JObject.Parse(locationResponse);
-            return whoisJO["country"].ToString();
-        }
+        
         /// <summary>
         /// Заполнение товаров по чеку (ВНИМАНИЕ!!! Работает только для казахтелекома consumer.oofd.kz)
         /// </summary>
@@ -170,6 +201,7 @@ namespace JewishCalculationWPF.Classes
         /// <param name="fnCh">ФН. Номер фискального накопителя</param>
         /// <param name="iCh">ФД. Номер фискального документа</param>
         /// <param name="fpCh">ФП. Фискальный признак документа</param>
+        [Obsolete("Этот метод больше не работает, так как в этой проверке добавили подключение по токену и поменяли ContentType на multipart/form-data")]
         internal bool GetCheckFromOfdRu(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
         {
             var url = "https://proverkacheka.com/api/v1/check/get";//"https://proverkacheka.com/check/get";
@@ -219,9 +251,9 @@ namespace JewishCalculationWPF.Classes
 
     abstract class FromCheck { }
 
-    class FromCheckKZ : FromCheck
+    class FromCheckKZ : FromCheck //TODO реализовать для KZ
     {
-
+       
     }
 
     class FromCheckRU : FromCheck
@@ -266,13 +298,22 @@ namespace JewishCalculationWPF.Classes
 
                     foreach (var nodes in tovarNodes)
                     {
-                        string Data = Regex.Replace(nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-right\"]").FirstOrDefault().InnerText.Replace("\r\n", ""), "[ ]+", " ").Trim();
+                        string Data = Regex.Replace(nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-right\"]")
+                                                         .FirstOrDefault().InnerText
+                                                         .Replace("\r\n", ""), "[ ]+", " ").Trim();
                         Models.Products.Add(new Models.Product
                         {
-                            Name = nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-left\"]").FirstOrDefault().InnerText.Replace("&quot;", ""),
-                            Price = double.Parse(new Regex(@"X(.*?)=").Match(Data).Groups[1].Value.Trim(), CultureInfo.InvariantCulture),
-                            Quantity = double.Parse(Data.Substring(0, Data.IndexOf('X')).Trim(), CultureInfo.InvariantCulture),
-                            Sum = double.Parse(new Regex(@"=(.*)").Match(Data).Groups[1].Value.Trim(), CultureInfo.InvariantCulture)
+                            Name = nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-left\"]")
+                                        .FirstOrDefault().InnerText
+                                        .Replace("&quot;", ""),
+                            Price = double.Parse(new Regex(@"X(.*?)=").Match(Data)
+                                                                      .Groups[1].Value
+                                                                      .Trim(), CultureInfo.InvariantCulture),
+                            Quantity = double.Parse(Data.Substring(0, Data.IndexOf('X'))
+                                                        .Trim().Replace(',', '.'), CultureInfo.InvariantCulture),
+                            Sum = double.Parse(new Regex(@"=(.*)").Match(Data)
+                                                                  .Groups[1].Value
+                                                                  .Trim(), CultureInfo.InvariantCulture)
                         });
                     }
                 }

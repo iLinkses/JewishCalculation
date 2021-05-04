@@ -2,16 +2,18 @@
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace JewishCalculationWPF.Classes
 {
     class ToExcel
     {
-        internal FileInfo GetExcel()
+        internal void GetExcel()
         {
             using (ExcelPackage excelPackage = new ExcelPackage())
             {
@@ -28,8 +30,34 @@ namespace JewishCalculationWPF.Classes
 
                 //Save your file
                 FileInfo fi = new FileInfo(Directory.GetCurrentDirectory() + $"\\Еврейский расчет {DateTime.Now:dd_MM_yyyy}.xlsx");
-                excelPackage.SaveAs(fi);//Добавить проверку на существование файла, с предложением о перезаписи
-                return fi;
+                try
+                {
+                    if (fi.Exists)
+                    {
+                        if (MessageBox.Show($"Файл {fi.Name} уже существует.\nПерезаписать файл?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            //var t1 = Process.GetProcessesByName("EXCEL");
+                            //foreach (var t in t1)
+                            //{
+                            //    var test = t.MainWindowTitle.ToUpper();
+                            //    if (test.Equals(fi.Name))//валится здесь почему то ¯\_(ツ)_/¯
+                            //    {
+                            //        MessageBox.Show($"Файл {fi.Name} открыт.\nЗакройте файл и повторите!", "Внимание!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            //        return;
+                            //    } 
+                            //}
+                            fi.Delete();
+                        }
+                        else return;
+                    }
+                    excelPackage.SaveAs(fi);
+                    MessageBox.Show($"Файл {fi.Name} создан!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
             }
         }
 
