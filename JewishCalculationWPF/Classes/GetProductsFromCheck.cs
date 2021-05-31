@@ -77,7 +77,7 @@ namespace JewishCalculationWPF.Classes
             }
             else this.Done = false;
         }
-        
+
         /// <summary>
         /// Заполнение товаров по чеку (ВНИМАНИЕ!!! Работает только для казахтелекома consumer.oofd.kz)
         /// </summary>
@@ -253,7 +253,7 @@ namespace JewishCalculationWPF.Classes
 
     class FromCheckKZ : FromCheck //TODO реализовать для KZ
     {
-       
+
     }
 
     class FromCheckRU : FromCheck
@@ -261,6 +261,32 @@ namespace JewishCalculationWPF.Classes
         public bool Done { get; private set; }
         public FromCheckRU(DateTime tCh, double sCh, string fnCh, string iCh, string fpCh)
         {
+            ///---------------------------------------------------------------------------------
+            ///Получение капчи
+            string captchaStr = "";
+            var CaptchaUrl = "https://check.ofd.ru/api/captcha/common";
+
+            var httpRequestCaptcha = (HttpWebRequest)WebRequest.Create(CaptchaUrl);
+
+            var httpResponseCaptcha = (HttpWebResponse)httpRequestCaptcha.GetResponse();
+            CookieCollection Coocies = new CookieCollection();
+
+            if (httpResponseCaptcha.StatusCode == HttpStatusCode.OK)
+            {
+                Coocies = httpResponseCaptcha.Cookies;
+                using (var stream = httpResponseCaptcha.GetResponseStream())
+                {
+                    Windows.Captcha captcha = new Windows.Captcha();
+                    captcha.img.Source = System.Windows.Media.Imaging.BitmapFrame.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.OnLoad); ;
+                    captcha.ShowDialog();
+                    if (captcha.tbCaptcha.Text.Length > 0)
+                    {
+                        captchaStr = captcha.tbCaptcha.Text;
+                    }
+                    else return;
+                }
+            }
+            ///---------------------------------------------------------------------------------
             var url = "https://check.ofd.ru/Document/FetchReceiptFromFns";
 
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -275,6 +301,7 @@ namespace JewishCalculationWPF.Classes
                 ReceiptOperationType = "1",
                 DocNumber = iCh,
                 DocFiscalSign = fpCh,
+                Captcha = captchaStr,
                 DocDateTime = tCh
             });
 
