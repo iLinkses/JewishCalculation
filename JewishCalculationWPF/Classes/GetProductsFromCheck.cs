@@ -327,13 +327,13 @@ namespace JewishCalculationWPF.Classes
                     {
                         string Data = Regex.Replace(nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-right\"]")
                                                          .FirstOrDefault().InnerText
-                                                         .Replace("\r\n", ""), "[ ]+", " ").Trim();
+                                                         .Replace("\r\n", ""), @"\s+", " ").Trim();
                         Models.Products.Add(new Models.Product
                         {
                             Name = nodes.SelectNodes("div[@class=\"ifw-col ifw-col-1 text-left\"]")
                                         .FirstOrDefault().InnerText
                                         .Replace("&quot;", ""),
-                            Price = double.Parse(new Regex(@"X(.*?)=").Match(Data)
+                            Price = double.Parse(new Regex(@"X\s*(\d+.?\d*).*=").Match(Data)
                                                                       .Groups[1].Value
                                                                       .Trim(), CultureInfo.InvariantCulture),
                             Quantity = double.Parse(Data.Substring(0, Data.IndexOf('X'))
